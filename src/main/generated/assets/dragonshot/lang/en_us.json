@@ -1,0 +1,5 @@
+{
+  "event.dragonshot.crystals": "Crystals",
+  "event.dragonshot.crystals.destroyed": "All Crystals Destroyed",
+  "event.dragonshot.crystals.remaining": "Remaining: %s"
+}

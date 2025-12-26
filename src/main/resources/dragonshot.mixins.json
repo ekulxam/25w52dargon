@@ -5,6 +5,7 @@
   "mixins": [
     "AbstractHurtingProjectileMixin",
     "DragonFireballMixin",
+    "EndDragonFightMixin",
     "EnderDragonMixin"
   ],
   "injectors": {

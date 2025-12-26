@@ -19,7 +19,7 @@
           "survivalblock.dragonshot.Dragonshot"
 		],
 		"fabric-datagen": [
-          "survivalblock.dragonshot.DragonshotDataGenerator"
+          "survivalblock.dragonshot.datagen.DragonshotDataGenerator"
 		]
 	},
 	"mixins": [
