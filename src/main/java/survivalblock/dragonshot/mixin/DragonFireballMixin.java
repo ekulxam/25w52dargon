@@ -5,6 +5,7 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.projectile.hurtingprojectile.DragonFireball;
 import org.spongepowered.asm.mixin.Mixin;
 
+// TODO: dragon's breath gradually increases in height too?
 @Mixin(DragonFireball.class)
 public class DragonFireballMixin extends AbstractHurtingProjectileMixin {
     @Override
