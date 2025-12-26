@@ -54,7 +54,7 @@ public class EndDragonFightMixin {
 
     @Inject(method = "updateCrystalCount", at = @At("RETURN"))
     private void updateCrystalEvent(CallbackInfo ci, @Share("spikeCount")LocalIntRef localIntRef) {
-        if (this.crystalsAlive < 0) {
+        if (this.crystalsAlive <= 0) {
             this.dragonshot$crystalEvent.setName(dragonshot$CRYSTAL_EVENT_DESTROYED_NAME);
         } else if (this.crystalsAlive <= 2) {
             this.dragonshot$crystalEvent.setName(dragonshot$CRYSTAL_EVENT_NAME.copy().append(" - ").append(Component.translatable("event.dragonshot.crystals.remaining", this.crystalsAlive)));
