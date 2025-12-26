@@ -1,26 +1,45 @@
 package survivalblock.dragonshot.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.pathfinder.BinaryHeap;
+import net.minecraft.world.level.pathfinder.Node;
+import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.level.pathfinder.Target;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import survivalblock.dragonshot.Dragonshot;
 import survivalblock.dragonshot.injected_interface.MultiCrystalDevourer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Mixin(EnderDragon.class)
 public abstract class EnderDragonMixin extends Mob implements MultiCrystalDevourer {
+    @Shadow
+    @Final
+    private BinaryHeap openSet;
     @Unique
     private final List<EndCrystal> dragonshot$crystals = new ArrayList<>();
 
@@ -63,5 +82,34 @@ public abstract class EnderDragonMixin extends Mob implements MultiCrystalDevour
     private double addToCrystals(EndCrystal instance, Entity entity, Operation<Double> original) {
         this.dragonshot$crystals.add(instance);
         return original.call(instance, entity);
+    }
+
+    @Inject(method = "findPath", at = @At("HEAD"))
+    private void beginDebugPaths(int i, int j, Node node, CallbackInfoReturnable<Path> cir, @Share("shouldDebug")LocalBooleanRef localBooleanRef, @Share("popNodes")LocalRef<Set<Node>> localRef) {
+        localBooleanRef.set(Dragonshot.debugPaths(this.level()));
+        localRef.set(localBooleanRef.get() ? new HashSet<>() : Set.of());
+    }
+
+    @ModifyExpressionValue(method = "findPath", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/pathfinder/BinaryHeap;pop()Lnet/minecraft/world/level/pathfinder/Node;"))
+    private Node captureOnPop(Node original, @Share("shouldDebug")LocalBooleanRef localBooleanRef, @Share("popNodes")LocalRef<Set<Node>> localRef) {
+        if (!localBooleanRef.get()) {
+            return original;
+        }
+        localRef.get().add(original);
+        return original;
+    }
+
+    @WrapOperation(method = "findPath", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/boss/enderdragon/EnderDragon;reconstructPath(Lnet/minecraft/world/level/pathfinder/Node;Lnet/minecraft/world/level/pathfinder/Node;)Lnet/minecraft/world/level/pathfinder/Path;"))
+    private Path debugPaths(EnderDragon instance, Node node, Node node2, Operation<Path> original, @Share("shouldDebug")LocalBooleanRef localBooleanRef, @Share("popNodes")LocalRef<Set<Node>> localRef) {
+        if (!localBooleanRef.get()) {
+            return original.call(instance, node, node2);
+        }
+
+        Path path = original.call(instance, node, node2);
+        if (path != null) {
+            ((PathAccessor) (Object) path).dragonshot$invokeSetDebug(this.openSet.getHeap(), localRef.get().toArray(Node[]::new), Stream.of(node, node2).map(Target::new).collect(Collectors.toSet()));
+        }
+        //noinspection ConstantValue
+        return path;
     }
 }

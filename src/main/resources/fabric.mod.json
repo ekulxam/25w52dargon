@@ -18,6 +18,9 @@
 		"main": [
           "survivalblock.dragonshot.Dragonshot"
 		],
+        "client": [
+          "survivalblock.dragonshot.DragonshotClient"
+        ],
 		"fabric-datagen": [
           "survivalblock.dragonshot.datagen.DragonshotDataGenerator"
 		]

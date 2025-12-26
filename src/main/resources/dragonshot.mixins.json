@@ -6,7 +6,8 @@
     "AbstractHurtingProjectileMixin",
     "DragonFireballMixin",
     "EndDragonFightMixin",
-    "EnderDragonMixin"
+    "EnderDragonMixin",
+    "PathAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
