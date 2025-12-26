@@ -8,5 +8,6 @@ public class DragonshotDataGenerator implements DataGeneratorEntrypoint {
     public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
         FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
         pack.addProvider(DragonshotEnUsLangGenerator::new);
+        pack.addProvider(DragonshotEntityTypeTagGenerator::new);
     }
 }
