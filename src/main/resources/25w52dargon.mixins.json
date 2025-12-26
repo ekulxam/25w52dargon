@@ -3,8 +3,9 @@
   "package": "survivalblock.dragonshot.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "EnderDragonMixin",
-    "ProjectileMixin"
+    "AbstractHurtingProjectileMixin",
+    "DragonFireballMixin",
+    "EnderDragonMixin"
   ],
   "injectors": {
     "defaultRequire": 1

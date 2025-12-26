@@ -33,5 +33,10 @@
 	},
     "suggests": {
         "enderdragontweaks": "*"
+    },
+    "custom": {
+        "loom:injected_interfaces": {
+          "net/minecraft/class_1510": ["survivalblock/dragonshot/injected_interface/MultiCrystalDevourer"]
+        }
     }
 }
