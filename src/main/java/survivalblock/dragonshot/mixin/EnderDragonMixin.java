@@ -12,11 +12,13 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.BinaryHeap;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.Target;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -82,6 +85,11 @@ public abstract class EnderDragonMixin extends Mob implements MultiCrystalDevour
     private double addToCrystals(EndCrystal instance, Entity entity, Operation<Double> original) {
         this.dragonshot$crystals.add(instance);
         return original.call(instance, entity);
+    }
+
+    @ModifyExpressionValue(method = "aiStep", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/EntitySelector;NO_CREATIVE_OR_SPECTATOR:Ljava/util/function/Predicate;", opcode = Opcodes.GETSTATIC))
+    private Predicate<Entity> noHitEndermen(Predicate<Entity> original) {
+        return (entity -> !(entity instanceof EnderMan) && original.test(entity));
     }
 
     @Inject(method = "findPath", at = @At("HEAD"))
