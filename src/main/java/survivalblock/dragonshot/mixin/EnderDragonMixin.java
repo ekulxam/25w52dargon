@@ -1,28 +1,26 @@
 package survivalblock.dragonshot.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.level.Level;
-import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import survivalblock.dragonshot.injected_interface.MultiCrystalDevourer;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Mixin(EnderDragon.class)
 public abstract class EnderDragonMixin extends Mob implements MultiCrystalDevourer {
-    @Shadow
-    @Nullable
-    public EndCrystal nearestCrystal;
     @Unique
     private final List<EndCrystal> dragonshot$crystals = new ArrayList<>();
 
@@ -46,35 +44,24 @@ public abstract class EnderDragonMixin extends Mob implements MultiCrystalDevour
         return this.dragonshot$crystals;
     }
 
-    /**
-     * @author Survivalblock
-     * @reason too many changes to do nicely and I don't feel like doing this properly right now
-     */
-    @Overwrite
-    private void checkCrystals() {
-        if ()
+    @Inject(method = "checkCrystals", at = @At("HEAD"))
+    private void checkAllCrystals(CallbackInfo ci) {
+        this.dragonshot$crystals.removeIf(crystal -> crystal == null || crystal.isRemoved());
+    }
 
-        Iterator<EndCrystal> itr = this.dragonshot$crystals.iterator();
-        while (itr.hasNext()) {
-            EndCrystal crystal = itr.next();
-            if (crystal == null || crystal.isRemoved()) {
-                itr.remove();
-            }
-        }
+    @ModifyExpressionValue(method = "checkCrystals", at = @At(value = "CONSTANT", args = "floatValue=1.0"))
+    private float multiplyHealthIncreaseByCrystalChains(float original) {
+        return original * Math.min(1, this.dragonshot$crystals.size());
+    }
 
-        if (!this.dragonshot$crystals.isEmpty() && this.tickCount % 10 == 0 && this.getHealth() < this.getMaxHealth()) {
-            this.setHealth(this.getHealth() + 1.0F * this.dragonshot$crystals.size());
-        }
+    @Inject(method = "checkCrystals", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getEntitiesOfClass(Ljava/lang/Class;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;"))
+    private void clearCrystalsForAdding(CallbackInfo ci) {
+        this.dragonshot$crystals.clear();
+    }
 
-        if (this.random.nextInt(10) == 0) {
-            this.dragonshot$crystals.clear();
-            this.dragonshot$crystals.addAll(
-                    this.level()
-                            .getEntitiesOfClass(
-                                    EndCrystal.class,
-                                    this.getBoundingBox().inflate(48.0)
-                            )
-            );
-        }
+    @WrapOperation(method = "checkCrystals", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/boss/enderdragon/EndCrystal;distanceToSqr(Lnet/minecraft/world/entity/Entity;)D"))
+    private double addToCrystals(EndCrystal instance, Entity entity, Operation<Double> original) {
+        this.dragonshot$crystals.add(instance);
+        return original.call(instance, entity);
     }
 }

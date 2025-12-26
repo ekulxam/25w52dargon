@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"id": "25w52dargon",
+	"id": "dragonshot",
 	"version": "${version}",
 	"name": "25w52dargon",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Stronger dragon for Fabric Holiday 2025",
 	"authors": [
 		"Survivalblock"
 	],
@@ -12,7 +12,7 @@
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
 	"license": "MIT",
-	"icon": "assets/25w52dargon/icon.png",
+	"icon": "assets/dragonshot/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
@@ -23,7 +23,7 @@
 		]
 	},
 	"mixins": [
-		"25w52dargon.mixins.json"
+      "dragonshot.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.18.4",
