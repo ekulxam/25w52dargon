@@ -40,7 +40,7 @@ public abstract class DragonStrafePlayerPhaseMixin extends AbstractDragonPhaseIn
             double velocityX = this.attackTarget.getX() - fireballX;
             double velocityY = this.attackTarget.getY(0.5) - fireballY;
             double velocityZ = this.attackTarget.getZ() - fireballZ;
-            Vec3 velocity = new Vec3(velocityX, velocityY, velocityZ);
+            Vec3 velocity = new Vec3(velocityX, velocityY, velocityZ).offsetRandomXZ(this.dragon.getRandom(), 0.1F);
             if (!this.dragon.isSilent()) {
                 serverLevel.levelEvent(null, LevelEvent.SOUND_DRAGON_FIREBALL, this.dragon.blockPosition(), 0);
             }
