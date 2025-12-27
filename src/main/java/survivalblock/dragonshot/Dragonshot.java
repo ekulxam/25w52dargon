@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 public class Dragonshot implements ModInitializer {
     /*
     begin credit
-    Taken from Fallen Star, which is licensed as follows:
+    Modified from Fallen Star, which is licensed as follows:
 
 All Rights Reserved
 
@@ -31,7 +31,7 @@ Copyright (c) 2025-present ekulxam
         if (hitEntity == null) {
             return;
         }
-        Vec3 vec3d = projectile.getDeltaMovement().multiply(-1, -1, -1);
+        Vec3 vec3d = projectile.getDeltaMovement().multiply(-1.1, -1.1, -1.1);
         projectile.setDeltaMovement(vec3d);
         projectile.needsSync = true;
 

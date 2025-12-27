@@ -6,11 +6,15 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragonPart;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.BinaryHeap;
@@ -89,6 +93,13 @@ public abstract class EnderDragonMixin extends Mob implements MultiCrystalDevour
     @ModifyExpressionValue(method = "aiStep", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/EntitySelector;NO_CREATIVE_OR_SPECTATOR:Ljava/util/function/Predicate;", opcode = Opcodes.GETSTATIC))
     private Predicate<Entity> noHitEndermen(Predicate<Entity> original) {
         return (entity -> !(entity instanceof EnderMan) && original.test(entity));
+    }
+
+    @Inject(method = "hurt(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/boss/enderdragon/EnderDragonPart;Lnet/minecraft/world/damagesource/DamageSource;F)Z", at = @At("HEAD"), cancellable = true)
+    private void noBedDamage(ServerLevel serverLevel, EnderDragonPart enderDragonPart, DamageSource damageSource, float f, CallbackInfoReturnable<Boolean> cir) {
+        if (damageSource.is(DamageTypes.BAD_RESPAWN_POINT)) {
+            cir.setReturnValue(false);
+        }
     }
 
     @Inject(method = "findPath", at = @At("HEAD"))
