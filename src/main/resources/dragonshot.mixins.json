@@ -4,6 +4,8 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AbstractHurtingProjectileMixin",
+    "DragonFireballMixin",
+    "DragonSittingFlamingPhaseMixin",
     "DragonStrafePlayerPhaseMixin",
     "EndDragonFightMixin",
     "EnderDragonMixin",

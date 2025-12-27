@@ -49,8 +49,9 @@ public abstract class DragonStrafePlayerPhaseMixin extends AbstractDragonPhaseIn
             dragonFireball.snapTo(fireballX, fireballY, fireballZ, 0.0F, 0.0F);
             serverLevel.addFreshEntity(dragonFireball);
         };
-        for (int i = 1; i < this.dragon.getRandom().nextInt(5); i++) {
-            Dragonshot.SCHEDULER.get().add(new Dragonshot.TimerTask(i * 5, fireballCreator));
+        int extra = this.dragon.getRandom().nextInt(2, 5);
+        for (int i = 1; i < extra; i++) {
+            Dragonshot.SCHEDULER.get().add(new Dragonshot.TimerTask(i * 30, fireballCreator));
         }
     }
 }

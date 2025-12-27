@@ -1,5 +1,7 @@
 package survivalblock.dragonshot.mixin;
 
+import com.llamalad7.mixinextras.expression.Definition;
+import com.llamalad7.mixinextras.expression.Expression;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -8,9 +10,11 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
@@ -100,6 +104,14 @@ public abstract class EnderDragonMixin extends Mob implements MultiCrystalDevour
         if (damageSource.is(DamageTypes.BAD_RESPAWN_POINT)) {
             cir.setReturnValue(false);
         }
+    }
+
+    @WrapOperation(method = "hurt(Lnet/minecraft/server/level/ServerLevel;Ljava/util/List;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/DamageSources;mobAttack(Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/damagesource/DamageSource;"))
+    private DamageSource enderDragonRam(DamageSources instance, LivingEntity livingEntity, Operation<DamageSource> original) {
+        return livingEntity.registryAccess()
+                .get(Dragonshot.DRAGON_RAM)
+                .map(damageType -> new DamageSource(damageType, livingEntity))
+                .orElseGet(() -> original.call(instance, livingEntity));
     }
 
     @Inject(method = "findPath", at = @At("HEAD"))

@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragonPart;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.hurtingprojectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Level;
@@ -19,6 +20,15 @@ public abstract class AbstractHurtingProjectileMixin extends Projectile {
 
     @ModifyReturnValue(method = "canHitEntity", at = @At("RETURN"))
     protected boolean noHitDragon(boolean original, Entity entity) {
-        return original && !(entity instanceof EnderDragon) || !this.ownedBy(entity);
+        if (!original) {
+            return false;
+        }
+        if (entity instanceof EnderDragon) {
+            return !this.ownedBy(entity);
+        }
+        if (entity instanceof EnderDragonPart part) {
+            return !this.ownedBy(part.parentMob);
+        }
+        return true;
     }
 }

@@ -16,5 +16,7 @@ public class DragonshotEnUsLangGenerator extends FabricLanguageProvider {
         translationBuilder.add("event.dragonshot.crystals", "Crystals");
         translationBuilder.add("event.dragonshot.crystals.remaining", "Remaining: %s");
         translationBuilder.add("event.dragonshot.crystals.destroyed", "All Crystals Destroyed");
+
+        translationBuilder.add("death.attack.dragonshot.dragon_ram", "%1$s was ragdolled by %2$s");
     }
 }

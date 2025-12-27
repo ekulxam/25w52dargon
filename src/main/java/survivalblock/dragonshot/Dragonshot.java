@@ -6,10 +6,12 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.debug.DebugSubscriptions;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.ProjectileDeflection;
 import net.minecraft.world.level.Level;
@@ -22,6 +24,10 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Dragonshot implements ModInitializer {
+    public static final String MOD_ID = "dragonshot";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final int BREATH_AMPLIFIER_INCREASE = 2;
+
     /*
     begin credit
     Modified from Fallen Star, which is licensed as follows:
@@ -54,9 +60,8 @@ Copyright (c) 2025-present ekulxam
     end credit
      */
 
-	public static final String MOD_ID = "25w52dargon";
-    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final ThreadLocal<List<TimerTask>> SCHEDULER = ThreadLocal.withInitial(ArrayList::new);
+    public static final ResourceKey<DamageType> DRAGON_RAM = ResourceKey.create(Registries.DAMAGE_TYPE, id("dragon_ram"));
 
 	@Override
 	public void onInitialize() {
