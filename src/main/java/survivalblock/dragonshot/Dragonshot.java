@@ -3,6 +3,7 @@ package survivalblock.dragonshot;
 import com.mojang.math.Constants;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
@@ -15,6 +16,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class Dragonshot implements ModInitializer {
     /*
@@ -51,10 +56,22 @@ Copyright (c) 2025-present ekulxam
 
 	public static final String MOD_ID = "25w52dargon";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final ThreadLocal<List<TimerTask>> SCHEDULER = ThreadLocal.withInitial(ArrayList::new);
 
 	@Override
 	public void onInitialize() {
 		LOGGER.info("It's dargon time");
+        ServerTickEvents.END_WORLD_TICK.register(serverLevel -> {
+            Iterator<TimerTask> itr = SCHEDULER.get().iterator();
+            while (itr.hasNext()) {
+                TimerTask task = itr.next();
+                task.countdown--;
+                if (task.countdown <= 0) {
+                    task.runnable.run();
+                    itr.remove();
+                }
+            }
+        });
 	}
 
     public static Identifier id(String path) {
@@ -63,5 +80,15 @@ Copyright (c) 2025-present ekulxam
 
     public static boolean debugPaths(Level level) {
         return level instanceof ServerLevel serverLevel && serverLevel.getServer().debugSubscribers().hasAnySubscriberFor(DebugSubscriptions.ENTITY_PATHS);
+    }
+
+    public static class TimerTask {
+        public int countdown;
+        public final Runnable runnable;
+
+        public TimerTask(int countdown, Runnable runnable) {
+            this.countdown = countdown;
+            this.runnable = runnable;
+        }
     }
 }
