@@ -8,8 +8,9 @@
 		"Survivalblock"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/ekulxam/25w52dargon",
+		"sources": "https://github.com/ekulxam/25w52dargon",
+        "issues": "https://github.com/ekulxam/25w52dargon/issues"
 	},
 	"license": "MIT",
 	"icon": "assets/dragonshot/icon.png",
@@ -39,7 +40,8 @@
     },
     "custom": {
         "loom:injected_interfaces": {
-          "net/minecraft/class_1510": ["survivalblock/dragonshot/injected_interface/MultiCrystalDevourer"]
+          "net/minecraft/class_1510": ["survivalblock/dragonshot/injected_interface/MultiCrystalDevourer"],
+          "net/minecraft/class_1676": ["survivalblock/dragonshot/injected_interface/Reflectable"]
         }
     }
 }

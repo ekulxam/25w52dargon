@@ -10,7 +10,8 @@
     "EndDragonFightMixin",
     "EnderDragonMixin",
     "EntityMixin",
-    "PathAccessor"
+    "PathAccessor",
+    "ProjectileMixin"
   ],
   "injectors": {
     "defaultRequire": 1

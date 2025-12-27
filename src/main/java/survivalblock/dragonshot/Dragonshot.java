@@ -39,9 +39,10 @@ Copyright (c) 2025-present ekulxam
     public static final TagKey<EntityType<?>> PROJECTILE_CHANGES_OWNER = TagKey.create(Registries.ENTITY_TYPE, id("projectile_changes_owner"));
 
     public static final ProjectileDeflection REFLECTION = (projectile, hitEntity, random) -> {
-        if (hitEntity == null) {
+        if (hitEntity == null || projectile.dragonshot$hasBeenReflected()) {
             return;
         }
+
         Vec3 vec3d = projectile.getDeltaMovement().multiply(-1.1, -1.1, -1.1);
         projectile.setDeltaMovement(vec3d);
         projectile.needsSync = true;
@@ -54,6 +55,7 @@ Copyright (c) 2025-present ekulxam
         if (projectile.getType().is(PROJECTILE_CHANGES_OWNER)) {
             projectile.setOwner(hitEntity);
         }
+        projectile.dragonshot$markReflected();
     };
     /*
     This will remain ARR until I, ekulxam, find a more suitable license for Fallen Star
