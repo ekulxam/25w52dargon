@@ -80,7 +80,7 @@ public abstract class EnderDragonMixin extends Mob implements MultiCrystalDevour
 
     @ModifyExpressionValue(method = "checkCrystals", at = @At(value = "CONSTANT", args = "floatValue=1.0"))
     private float multiplyHealthIncreaseByCrystalChains(float original) {
-        return original * Math.max(1, this.dragonshot$crystals.size());
+        return original * Math.max(1, this.getMaxHealth() / 200) * Math.max(1, this.dragonshot$crystals.size());
     }
 
     @Inject(method = "checkCrystals", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getEntitiesOfClass(Ljava/lang/Class;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;"))

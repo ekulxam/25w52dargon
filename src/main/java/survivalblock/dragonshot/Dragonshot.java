@@ -26,7 +26,7 @@ import java.util.List;
 public class Dragonshot implements ModInitializer {
     public static final String MOD_ID = "dragonshot";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-    public static final int BREATH_AMPLIFIER_INCREASE = 2;
+    public static final int BREATH_AMPLIFIER_INCREASE = 4;
 
     /*
     begin credit
